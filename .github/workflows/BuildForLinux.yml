@@ -1,0 +1,49 @@
+name: Build GeMMonitor
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    # 使用 Ubuntu 最新版本
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    # 安装 Qt 环境
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v3
+      with:
+        # 指定 Qt 版本，对应你系统里的 6.x
+        version: '6.6.0' 
+        # 安装需要的模块
+        modules: 'qtbase'
+
+    # 安装 Linux 系统级别的依赖 (编译 Qt 程序必需)
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libgl1-mesa-dev libxkbcommon-dev libegl1-mesa-dev build-essential
+
+    # 配置 CMake (使用默认版本)
+    - name: Configure CMake
+      run: |
+        cmake -S . -B build \
+          -DCMAKE_PREFIX_PATH=${{ env.Qt6_DIR }} \
+          -DCMAKE_BUILD_TYPE=Release
+
+    # 执行编译
+    - name: Build
+      run: cmake --build build --config Release
+
+    # (可选) 归档生成的二进制文件，方便下载
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: GeMMonitor-Linux
+        path: build/GeMMonitor
