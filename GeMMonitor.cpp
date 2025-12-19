@@ -140,10 +140,10 @@ public:
 
 GeMMonitor::GeMMonitor(QWidget *parent) : QWidget(parent), ui(new Ui::GeMMonitor) {
     ui->setupUi(this);
+    ui->version->setText(QString("version ") + APP_VERSION);
 
     memInfo = new MemInfo();
     cpuInfo = new CpuInfo();
-
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &GeMMonitor::updateSystemInfo);
     timer->start(500); // 500毫秒更新一次
