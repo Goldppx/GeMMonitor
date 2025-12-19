@@ -8,6 +8,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # 必须给予写入 Release 的权限
     permissions:
       contents: write
 
