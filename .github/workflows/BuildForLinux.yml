@@ -1,4 +1,4 @@
-name: Build GeMMonitor
+name: Build and Package GeMMonitor
 
 on:
   push:
@@ -28,7 +28,7 @@ jobs:
     - name: Install Dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y libgl1-mesa-dev libxkbcommon-dev libegl1-mesa-dev build-essential
+        sudo apt-get install -y libgl1-mesa-dev libxkbcommon-dev libegl1-mesa-dev build-essential file
 
     - name: Configure CMake
       run: |
@@ -39,8 +39,15 @@ jobs:
     - name: Build
       run: cmake --build build --config Release
 
-    - name: Upload Artifact
+    - name: Package
+      run: |
+        cd build
+        cpack -C Release
+
+    - name: Upload Artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: GeMMonitor-Linux
-        path: build/GeMMonitor
+        name: GeMMonitor-Packages
+        path: |
+          build/*.deb
+          build/*.tar.xz
